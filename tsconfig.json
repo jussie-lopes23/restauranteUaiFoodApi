@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2020",         // Versão moderna do JS
+    "module": "commonjs",       // Padrão do Node.js
+    "rootDir": "./src",         // Onde ficará nosso código TS
+    "outDir": "./dist",         // Onde o JS compilado irá
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,             // Habilita checagens de tipo rigorosas
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/@types"]
+  },
+  "include": ["src/**/*"] // Diz ao TS para só olhar a pasta 'src'
+}

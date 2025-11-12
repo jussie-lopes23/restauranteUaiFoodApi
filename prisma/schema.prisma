@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Enums ----
+
+enum UserType {
+  CLIENT
+  ADMIN
+}
+
+enum PaymentMethod {
+  CASH
+  DEBIT
+  CREDIT
+  PIX
+}
+
+// ---- Modelos do Banco ----
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique 
+  name      String
+  phone     String
+  password  String     // Armazenaremos o hash (bcrypt)
+  type      UserType   @default(CLIENT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relação N:N com Endereços
+  addresses Address[]
+
+  // Relações com Pedidos
+  ordersAsClient Order[] @relation("ClientOrders")
+  ordersCreated  Order[] @relation("AdminOrders")
+
+  @@map("users")
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  street    String
+  number    String
+  district  String
+  city      String
+  state     String
+  zipCode   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relação N:N com Usuários
+  users User[]
+
+  @@map("addresses")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relação 1:N com Itens
+  items Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id          String   @id @default(cuid())
+  description String
+  unitPrice   Decimal  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relação N:1 com Categoria
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  // Relação 1:N com OrderItem
+  orderItems OrderItem[]
+
+  @@map("items")
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  paymentMethod PaymentMethod
+  status        String        // Ex: "PENDING", "PREPARING", "DONE"
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relação N:1 com User (Cliente)
+  clientId String
+  client   User   @relation("ClientOrders", fields: [clientId], references: [id])
+
+  // Relação N:1 com User (Quem criou - ex: Admin)
+  createdById String
+  createdBy   User   @relation("AdminOrders", fields: [createdById], references: [id])
+
+  // Relação 1:N com OrderItem
+  orderItems OrderItem[]
+
+  @@map("orders") // 'Order' é palavra reservada no SQL, 'orders' é mais seguro
+}
+
+// --- TABELA CORRIGIDA ---
+// Esta é a "linha da nota fiscal"
+model OrderItem {
+  id        String   @id @default(cuid())
+  quantity  Int     
+  unitPrice Decimal
+
+  // Relação N:1 com Pedido
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  // Relação N:1 com Item (corrigido: apenas UM item por linha)
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("order_items")
+}
