@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import userRoutes from './user.routes';
 import categoryRoutes from './category.routes';
+import itemRoutes from './item.routes';
 // Importaremos os outros roteadores aqui
 // import itemRoutes from './item.routes';
 // import orderRoutes from './order.routes';
@@ -11,6 +12,7 @@ const routes = Router();
 // redirecionada para o 'userRoutes'
 routes.use('/users', userRoutes);
 routes.use('/categories', categoryRoutes);
+routes.use('/items', itemRoutes);
 
 // routes.use('/items', itemRoutes);
 // routes.use('/orders', orderRoutes);
