@@ -1,10 +1,10 @@
-// Este arquivo "aumenta" a definição de tipos original do Express
+import { UserType } from '@prisma/client'; // 1. IMPORTE O ENUM
 
 // 1. Define o tipo do nosso usuário (que vem do payload do token)
 interface UserPayload {
   id: string;
   name: string;
-  type: string;
+  type: UserType; // 2. MUDE DE 'string' PARA 'UserType'
 }
 
 // 2. Sobrescreve o módulo 'express-serve-static-core'

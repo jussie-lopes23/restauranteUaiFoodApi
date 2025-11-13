@@ -38,3 +38,15 @@ export const loginUserSchema = z.object({
 });
 
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
+
+export const updateUserSchema = z.object({
+  name: z.string().trim().min(3, {
+    message: 'O nome precisa ter no mínimo 3 caracteres.',
+  }).optional(), // 'optional()' permite que o campo não seja enviado
+
+  phone: z.string().trim().min(10, {
+    message: 'O telefone precisa ter no mínimo 10 dígitos.',
+  }).optional(),
+}).partial(); // '.partial()' torna todos os campos opcionais
+
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;

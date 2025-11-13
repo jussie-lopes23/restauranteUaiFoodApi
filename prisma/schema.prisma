@@ -63,6 +63,9 @@ model Address {
   // Relação N:N com Usuários
   users User[]
 
+  // Relação 1:N com Pedidos (um endereço pode ter vários pedidos)
+  orders Order[]
+
   @@map("addresses")
 }
 
@@ -98,22 +101,27 @@ model Item {
 model Order {
   id            String        @id @default(cuid())
   paymentMethod PaymentMethod
-  status        String        // Ex: "PENDING", "PREPARING", "DONE"
+  status        String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  // Relação N:1 com User (Cliente)
+  // Relação com User (Cliente)
   clientId String
   client   User   @relation("ClientOrders", fields: [clientId], references: [id])
 
-  // Relação N:1 com User (Quem criou - ex: Admin)
+  // Relação com User (Quem criou - ex: Admin)
   createdById String
   createdBy   User   @relation("AdminOrders", fields: [createdById], references: [id])
 
+  // --- ADICIONE ESTAS DUAS LINHAS ---
+  // Relação N:1 com Endereço (Obrigatório)
+  addressId String
+  address   Address @relation(fields: [addressId], references: [id])
+  
   // Relação 1:N com OrderItem
   orderItems OrderItem[]
 
-  @@map("orders") // 'Order' é palavra reservada no SQL, 'orders' é mais seguro
+  @@map("orders")
 }
 
 // --- TABELA CORRIGIDA ---

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { UserType } from '@prisma/client';
 
 // Vamos definir uma interface para o payload do nosso token
 interface TokenPayload {
@@ -48,6 +49,16 @@ export const authMiddleware = (
 
     // Tenta verificar o token com o segredo
     const payload = jwt.verify(token, secret) as TokenPayload;
+
+    let userType: UserType;
+    if (payload.type === 'ADMIN') {
+      userType = UserType.ADMIN;
+    } else if (payload.type === 'CLIENT') {
+      userType = UserType.CLIENT;
+    } else {
+      // Se o token tiver um tipo inválido
+      return res.status(401).json({ message: 'Tipo de usuário inválido no token.' });
+    }
 
     // 5. Se for válido, anexa os dados do usuário na requisição
     // (Vamos corrigir o erro do TypeScript no próximo passo)

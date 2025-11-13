@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma'; // Nosso cliente Prisma
-import { CreateUserInput, LoginUserInput } from '../schemas/user.schema'; // Nosso tipo Zod
+import { CreateUserInput, LoginUserInput, UpdateUserInput } from '../schemas/user.schema'; // Nosso tipo Zod
 import jwt from 'jsonwebtoken';
 
 /**
@@ -130,4 +130,28 @@ export const getMeService = async (userId: string) => {
   }
 
   return user;
+};
+
+export const updateMeService = async (userId: string, input: UpdateUserInput) => {
+  // 2. ATUALIZA o usuário
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      name: input.name,
+      phone: input.phone,
+    },
+    // 3. SELECIONA os campos seguros para retornar
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      phone: true,
+      type: true,
+      createdAt: true,
+    },
+  });
+
+  return updatedUser;
 };

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { createUserSchema, loginUserSchema } from '../schemas/user.schema'; // 1. Schema do Zod
-import { createUserService, loginUserService, getMeService } from '../services/user.service'; // 2. Nosso Serviço
+import { createUserSchema, loginUserSchema, updateUserSchema } from '../schemas/user.schema'; // 1. Schema do Zod
+import { createUserService, loginUserService, getMeService, updateMeService, } from '../services/user.service'; // 2. Nosso Serviço
 import { ZodError } from 'zod';
 
 /**
@@ -112,6 +112,35 @@ export const getMeController = async (req: Request, res: Response) => {
 
     // Erro genérico
     console.error('Erro inesperado no getMeController:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+export const updateMeController = async (req: Request, res: Response) => {
+  try {
+    // 2. VALIDA o body com o schema de update
+    const validatedData = updateUserSchema.parse(req.body);
+
+    // 3. PEGA o ID do usuário (do token)
+    const userId = req.user!.id;
+
+    // 4. CHAMA o serviço
+    const user = await updateMeService(userId, validatedData);
+
+    // 5. RETORNA o usuário atualizado
+    return res.status(200).json(user);
+
+  } catch (error: unknown) {
+    // 6. TRATA erros (Zod)
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Erro de validação',
+        errors: error.issues,
+      });
+    }
+
+    // Erro genérico
+    console.error('Erro inesperado no updateMeController:', error);
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };
