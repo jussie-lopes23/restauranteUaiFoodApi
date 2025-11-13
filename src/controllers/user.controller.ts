@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { createUserSchema, loginUserSchema, updateUserSchema } from '../schemas/user.schema'; // 1. Schema do Zod
-import { createUserService, loginUserService, getMeService, updateMeService, } from '../services/user.service'; // 2. Nosso Serviço
+import { createUserSchema, loginUserSchema, updateUserSchema, changePasswordSchema, adminUpdateUserSchema } from '../schemas/user.schema'; // 1. Schema do Zod
+import { createUserService, loginUserService, getMeService, updateMeService, changePasswordService, deleteMeService, listUsersService, getUserByIdService, updateUserByIdService, deleteUserByIdService, } from '../services/user.service'; // 2. Nosso Serviço
 import { ZodError } from 'zod';
 
 /**
@@ -141,6 +141,133 @@ export const updateMeController = async (req: Request, res: Response) => {
 
     // Erro genérico
     console.error('Erro inesperado no updateMeController:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+export const changePasswordController = async (req: Request, res: Response) => {
+  try {
+    const validatedData = changePasswordSchema.parse(req.body);
+    const userId = req.user!.id;
+
+    await changePasswordService(userId, validatedData);
+
+    // 204 No Content - Sucesso, mas sem corpo de resposta
+    return res.status(204).send();
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        message: 'Erro de validação',
+        errors: error.issues,
+      });
+    }
+    // Erro de senha antiga incorreta
+    if (error instanceof Error && error.message === 'A senha antiga está incorreta.') {
+      // 401 Unauthorized - Credencial inválida
+      return res.status(401).json({ message: error.message });
+    }
+
+    console.error('Erro inesperado no changePasswordController:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+export const deleteMeController = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    await deleteMeService(userId);
+
+    // 204 No Content
+    return res.status(204).send();
+  } catch (error: unknown) {
+    // Erro de restrição de chave (usuário tem pedidos)
+    if (error instanceof Error && error.message.includes('associado a pedidos')) {
+      // 409 Conflict - A ação não pode ser concluída
+      return res.status(409).json({ message: error.message });
+    }
+    
+    console.error('Erro inesperado no deleteMeController:', error);
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+/**
+ * (Admin) Handler para listar todos os usuários
+ */
+export const listUsersController = async (req: Request, res: Response) => {
+  try {
+    const users = await listUsersService();
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+/**
+ * (Admin) Handler para buscar usuário por ID
+ */
+export const getUserByIdController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = await getUserByIdService(id);
+    return res.status(200).json(user);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === 'Usuário não encontrado.') {
+      return res.status(404).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+/**
+ * (Admin) Handler para atualizar usuário por ID
+ */
+export const updateUserByIdController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const validatedData = adminUpdateUserSchema.parse(req.body);
+    
+    // Impede o admin de se atualizar por esta rota (deve usar /me)
+    if (id === req.user?.id) {
+      return res.status(403).json({ message: 'Use a rota /me para atualizar seu próprio perfil.'});
+    }
+
+    const user = await updateUserByIdService(id, validatedData);
+    return res.status(200).json(user);
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({ message: 'Erro de validação', errors: error.issues });
+    }
+    if (error instanceof Error && error.message === 'Usuário não encontrado.') {
+      return res.status(404).json({ message: error.message });
+    }
+    return res.status(500).json({ message: 'Erro interno do servidor.' });
+  }
+};
+
+/**
+ * (Admin) Handler para deletar usuário por ID
+ */
+export const deleteUserByIdController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Impede o admin de se deletar por esta rota (deve usar /me)
+    if (id === req.user?.id) {
+      return res.status(403).json({ message: 'Use a rota /me para deletar seu próprio perfil.'});
+    }
+
+    await deleteUserByIdService(id);
+    return res.status(204).send();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.message === 'Usuário não encontrado.') {
+        return res.status(404).json({ message: error.message });
+      }
+      if (error.message.includes('associado a pedidos')) {
+        return res.status(409).json({ message: error.message });
+      }
+    }
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };

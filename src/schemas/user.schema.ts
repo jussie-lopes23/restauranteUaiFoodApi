@@ -50,3 +50,22 @@ export const updateUserSchema = z.object({
 }).partial(); // '.partial()' torna todos os campos opcionais
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
+export const changePasswordSchema = z.object({
+  oldPassword: z.string().min(1, {
+    message: 'A senha antiga é obrigatória.',
+  }),
+  newPassword: z.string().min(6, {
+    message: 'A nova senha precisa ter no mínimo 6 caracteres.',
+  }),
+});
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+
+// 7. Schema para ADMIN ATUALIZAR um usuário
+export const adminUpdateUserSchema = z.object({
+  name: z.string().trim().min(3).optional(),
+  phone: z.string().trim().min(10).optional(),
+  type: z.nativeEnum(UserType).optional(), // O Admin pode mudar o tipo do usuário
+}).partial(); // .partial() torna todos os campos opcionais
+
+export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;

@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma'; // Nosso cliente Prisma
-import { CreateUserInput, LoginUserInput, UpdateUserInput } from '../schemas/user.schema'; // Nosso tipo Zod
+import { CreateUserInput, LoginUserInput, UpdateUserInput, ChangePasswordInput, AdminUpdateUserInput } from '../schemas/user.schema'; // Nosso tipo Zod
 import jwt from 'jsonwebtoken';
+
 
 /**
  * Função para criar um novo usuário no banco de dados.
@@ -155,3 +156,144 @@ export const updateMeService = async (userId: string, input: UpdateUserInput) =>
 
   return updatedUser;
 };
+
+export const changePasswordService = async (
+  userId: string,
+  input: ChangePasswordInput
+) => {
+  // 1. Busca o usuário (incluindo a senha)
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error('Usuário não encontrado.');
+  }
+
+  // 2. Verifica se a senha antiga está correta
+  const passwordMatches = await bcrypt.compare(
+    input.oldPassword,
+    user.password
+  );
+
+  if (!passwordMatches) {
+    throw new Error('A senha antiga está incorreta.');
+  }
+
+  // 3. Criptografa e salva a nova senha
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(input.newPassword, salt);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      password: hashedPassword,
+    },
+  });
+};
+
+export const deleteMeService = async (userId: string) => {
+  try {
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+  } catch (error: any) {
+    // Verifica se o erro é de restrição de chave estrangeira
+    if (error.code === 'P2003') { 
+      throw new Error(
+        'Não é possível deletar este usuário pois ele está associado a pedidos existentes.'
+      );
+    }
+    throw error;
+  }
+};
+
+
+/**
+ * (Admin) Lista todos os usuários do sistema
+ */
+export const listUsersService = async () => {
+  return prisma.user.findMany({
+    // Seleciona campos para NUNCA retornar a senha
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      phone: true,
+      type: true,
+      createdAt: true,
+    },
+  });
+};
+
+/**
+ * (Admin) Busca um usuário específico por ID
+ */
+export const getUserByIdService = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      phone: true,
+      type: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error('Usuário não encontrado.');
+  }
+  return user;
+};
+
+/**
+ * (Admin) Atualiza um usuário por ID
+ */
+export const updateUserByIdService = async (
+  userId: string,
+  input: AdminUpdateUserInput
+) => {
+  const userExists = await prisma.user.findUnique({ where: { id: userId } });
+  if (!userExists) {
+    throw new Error('Usuário não encontrado.');
+  }
+
+  return prisma.user.update({
+    where: { id: userId },
+    data: input,
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      phone: true,
+      type: true,
+    },
+  });
+};
+
+/**
+ * (Admin) Deleta um usuário por ID
+ */
+export const deleteUserByIdService = async (userId: string) => {
+  const userExists = await prisma.user.findUnique({ where: { id: userId } });
+  if (!userExists) {
+    throw new Error('Usuário não encontrado.');
+  }
+
+  try {
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+  } catch (error: any) {
+    // Erro P2003: Restrição de chave estrangeira (usuário tem pedidos)
+    if (error.code === 'P2003') {
+      throw new Error(
+        'Não é possível deletar este usuário pois ele está associado a pedidos existentes.'
+      );
+    }
+    throw error;
+  }
+};
+
