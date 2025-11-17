@@ -22,6 +22,10 @@ export const createUserSchema = z.object({
     message: 'O telefone precisa ter no mínimo 10 dígitos (DDD + número).',
   }),
 
+  acceptsTerms: z.literal(true, {
+    message: 'Você deve aceitar os termos de privacidade.',
+  }),
+
   // O tipo (ADMIN/CLIENT) não deve vir do front-end no cadastro
   // Vamos definir 'type' no 'service' como 'CLIENT' por padrão.
   // Se quiséssemos validar, poderíamos adicionar:

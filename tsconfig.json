@@ -8,7 +8,8 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,             // Habilita checagens de tipo rigorosas
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "./src/@types"]
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
+  
   },
   "include": ["src/**/*"] // Diz ao TS para só olhar a pasta 'src'
 }
