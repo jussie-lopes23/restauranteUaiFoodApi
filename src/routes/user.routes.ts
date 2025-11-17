@@ -22,5 +22,4 @@ userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
 userRoutes.put('/:id', authMiddleware, adminMiddleware, updateUserByIdController);
 userRoutes.delete('/:id', authMiddleware, adminMiddleware, deleteUserByIdController);
 
-
 export default userRoutes;

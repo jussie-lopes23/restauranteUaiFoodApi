@@ -133,6 +133,7 @@ export const getOrderByIdService = async (id: string, user: AuthUser) => {
     include: {
       client: { select: { name: true, email: true } },
       orderItems: { include: { item: true } },
+      address: true,
     },
   });
 
