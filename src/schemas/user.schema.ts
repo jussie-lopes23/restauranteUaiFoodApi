@@ -65,11 +65,18 @@ export const changePasswordSchema = z.object({
 });
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
-// 7. Schema para ADMIN ATUALIZAR um usuário
-export const adminUpdateUserSchema = z.object({
+// // // 7. Schema para ADMIN ATUALIZAR um usuário
+  export const adminUpdateUserSchema = z.object({
   name: z.string().trim().min(3).optional(),
-  phone: z.string().trim().min(10).optional(),
   type: z.nativeEnum(UserType).optional(), // O Admin pode mudar o tipo do usuário
-}).partial(); // .partial() torna todos os campos opcionais
+ }).partial(); // .partial() torna todos os campos opcionais
+
+// 7. Schema para ADMIN ATUALIZAR um usuário
+// export const adminUpdateUserSchema = z.object({
+//   name: z.string().trim().min(3).optional(),
+//   phone: z.string().trim().min(10).optional(),
+//   // Use z.enum com strings literais para evitar problemas de conversão
+//   type: z.enum(['CLIENT', 'ADMIN']).optional(), 
+// });
 
 export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;

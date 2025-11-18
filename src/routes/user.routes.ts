@@ -22,7 +22,7 @@ const userRoutes = Router();
  * @swagger
  * /users:
  *   post:
- *     summary: "Cria um novo usuário (Cadastro)."
+ *     summary: 'Cria um novo usuário (Cadastro).'
  *     tags:
  *       - Users
  *     requestBody:
@@ -47,20 +47,41 @@ const userRoutes = Router();
  *                 type: string
  *               password:
  *                 type: string
+ *                 format: password
  *               acceptsTerms:
  *                 type: boolean
- *                 description: "Usuário deve aceitar os termos (literal: true)"
+ *                 description: 'Usuário deve aceitar os termos (literal: true)'
  *     responses:
  *       '201':
- *         description: "Usuário criado com sucesso."
+ *         description: 'Usuário criado com sucesso.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       '400':
- *         description: "Erro de validação."
+ *         description: 'Erro de validação (Zod).'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *       '409':
- *         description: "Conflito (e-mail já em uso)."
+ *         description: 'Conflito (Regra de Negócio).'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Este e-mail já está em uso.'
  */
 userRoutes.post('/', createUserController);
 
@@ -68,7 +89,7 @@ userRoutes.post('/', createUserController);
  * @swagger
  * /users/login:
  *   post:
- *     summary: "Autentica um usuário e retorna um token JWT."
+ *     summary: 'Autentica um usuário e retorna um token JWT.'
  *     tags:
  *       - Users
  *     requestBody:
@@ -81,14 +102,14 @@ userRoutes.post('/', createUserController);
  *               email:
  *                 type: string
  *                 format: email
- *                 example: "admin@email.com"
+ *                 example: 'admin@email.com'
  *               password:
  *                 type: string
  *                 format: password
- *                 example: "senha123"
+ *                 example: 'senha123'
  *     responses:
  *       '200':
- *         description: "Login bem-sucedido."
+ *         description: 'Login bem-sucedido.'
  *         content:
  *           application/json:
  *             schema:
@@ -99,7 +120,15 @@ userRoutes.post('/', createUserController);
  *                 token:
  *                   type: string
  *       '401':
- *         description: "E-mail ou senha inválidos."
+ *         description: 'Credenciais inválidas.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'E-mail ou senha inválidos.'
  */
 userRoutes.post('/login', loginUserController);
 
@@ -109,20 +138,28 @@ userRoutes.post('/login', loginUserController);
  * @swagger
  * /users/me:
  *   get:
- *     summary: "Retorna os dados do usuário logado."
+ *     summary: 'Retorna os dados do usuário logado.'
  *     tags:
  *       - Users
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       '200':
- *         description: "Dados do usuário."
+ *         description: 'Dados do usuário.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       '401':
- *         description: "Não autorizado (token inválido ou ausente)."
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido ou ausente.'
  */
 userRoutes.get('/me', authMiddleware, getMeController);
 
@@ -130,7 +167,7 @@ userRoutes.get('/me', authMiddleware, getMeController);
  * @swagger
  * /users/me:
  *   put:
- *     summary: "Atualiza o nome ou telefone do usuário logado."
+ *     summary: 'Atualiza o nome ou telefone do usuário logado.'
  *     tags:
  *       - Users
  *     security:
@@ -143,19 +180,41 @@ userRoutes.get('/me', authMiddleware, getMeController);
  *             properties:
  *               name:
  *                 type: string
+ *                 optional: true
  *               phone:
  *                 type: string
+ *                 optional: true
  *     responses:
  *       '200':
- *         description: "Perfil atualizado."
+ *         description: 'Perfil atualizado.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       '400':
- *         description: "Erro de validação."
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  */
 userRoutes.put('/me', authMiddleware, updateMeController);
 
@@ -163,7 +222,7 @@ userRoutes.put('/me', authMiddleware, updateMeController);
  * @swagger
  * /users/me/password:
  *   put:
- *     summary: "Altera a senha do usuário logado."
+ *     summary: 'Altera a senha do usuário logado.'
  *     tags:
  *       - Users
  *     security:
@@ -184,11 +243,27 @@ userRoutes.put('/me', authMiddleware, updateMeController);
  *                 type: string
  *     responses:
  *       '204':
- *         description: "Senha alterada com sucesso."
+ *         description: 'Senha alterada com sucesso.'
  *       '400':
- *         description: "Erro de validação (ex: senha nova muito curta)."
+ *         description: 'Erro de validação (ex: senha nova muito curta).'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
  *       '401':
- *         description: "Não autorizado (ex: senha antiga incorreta)."
+ *         description: 'Senha antiga incorreta.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'A senha antiga está incorreta.'
  */
 userRoutes.put('/me/password', authMiddleware, changePasswordController);
 
@@ -196,18 +271,34 @@ userRoutes.put('/me/password', authMiddleware, changePasswordController);
  * @swagger
  * /users/me:
  *   delete:
- *     summary: "Deleta a conta do usuário logado."
+ *     summary: 'Deleta a conta do usuário logado.'
  *     tags:
  *       - Users
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       '204':
- *         description: "Conta deletada com sucesso."
+ *         description: 'Conta deletada com sucesso.'
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  *       '409':
- *         description: "Conflito (ex: usuário possui pedidos)."
+ *         description: 'Conflito (ex: usuário possui pedidos).'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Não é possível deletar este usuário pois ele está associado a pedidos existentes.'
  */
 userRoutes.delete('/me', authMiddleware, deleteMeController);
 
@@ -217,14 +308,14 @@ userRoutes.delete('/me', authMiddleware, deleteMeController);
  * @swagger
  * /users:
  *   get:
- *     summary: "(Admin) Lista todos os usuários do sistema."
+ *     summary: '(Admin) Lista todos os usuários do sistema.'
  *     tags:
  *       - Users
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       '200':
- *         description: "Lista de usuários."
+ *         description: 'Lista de usuários.'
  *         content:
  *           application/json:
  *             schema:
@@ -232,9 +323,25 @@ userRoutes.delete('/me', authMiddleware, deleteMeController);
  *               items:
  *                 $ref: '#/components/schemas/User'
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token não enviado.'
  *       '403':
- *         description: "Acesso negado (não é admin)."
+ *         description: 'Acesso negado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Acesso negado. Requer privilégios de administrador.'
  */
 userRoutes.get('/', authMiddleware, adminMiddleware, listUsersController);
 
@@ -242,7 +349,7 @@ userRoutes.get('/', authMiddleware, adminMiddleware, listUsersController);
  * @swagger
  * /users/{id}:
  *   get:
- *     summary: "(Admin) Busca um usuário específico por ID."
+ *     summary: '(Admin) Busca um usuário específico por ID.'
  *     tags:
  *       - Users
  *     security:
@@ -253,20 +360,28 @@ userRoutes.get('/', authMiddleware, adminMiddleware, listUsersController);
  *         required: true
  *         schema:
  *           type: string
- *         description: "O ID do usuário (CUID)"
+ *         description: 'O ID do usuário (CUID)'
  *     responses:
  *       '200':
- *         description: "Dados do usuário."
+ *         description: 'Dados do usuário.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
  *       '403':
- *         description: "Acesso negado."
+ *         description: 'Acesso negado.'
  *       '404':
- *         description: "Usuário não encontrado."
+ *         description: 'Usuário não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Usuário não encontrado.'
  */
 userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
 
@@ -274,7 +389,7 @@ userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
  * @swagger
  * /users/{id}:
  *   put:
- *     summary: "(Admin) Atualiza nome, telefone ou tipo de um usuário."
+ *     summary: '(Admin) Atualiza nome, telefone ou tipo de um usuário.'
  *     tags:
  *       - Users
  *     security:
@@ -285,7 +400,6 @@ userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
  *         required: true
  *         schema:
  *           type: string
- *         description: "O ID do usuário (CUID)"
  *     requestBody:
  *       content:
  *         application/json:
@@ -298,18 +412,36 @@ userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
  *                 type: string
  *               type:
  *                 type: string
- *                 enum: [CLIENT, ADMIN]
+ *                 enum:
+ *                   - CLIENT
+ *                   - ADMIN
  *     responses:
  *       '200':
- *         description: "Usuário atualizado."
+ *         description: 'Usuário atualizado.'
  *       '400':
- *         description: "Erro de validação."
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
  *       '403':
- *         description: "Acesso negado."
+ *         description: 'Acesso negado.'
  *       '404':
- *         description: "Usuário não encontrado."
+ *         description: 'Usuário não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Usuário não encontrado.'
  */
 userRoutes.put('/:id', authMiddleware, adminMiddleware, updateUserByIdController);
 
@@ -317,7 +449,7 @@ userRoutes.put('/:id', authMiddleware, adminMiddleware, updateUserByIdController
  * @swagger
  * /users/{id}:
  *   delete:
- *     summary: "(Admin) Deleta um usuário por ID."
+ *     summary: '(Admin) Deleta um usuário por ID.'
  *     tags:
  *       - Users
  *     security:
@@ -328,19 +460,39 @@ userRoutes.put('/:id', authMiddleware, adminMiddleware, updateUserByIdController
  *         required: true
  *         schema:
  *           type: string
- *         description: "O ID do usuário (CUID)"
  *     responses:
  *       '204':
- *         description: "Usuário deletado."
+ *         description: 'Usuário deletado.'
  *       '401':
- *         description: "Não autorizado."
+ *         description: 'Não autorizado.'
  *       '403':
- *         description: "Acesso negado."
+ *         description: 'Acesso negado.'
  *       '404':
- *         description: "Usuário não encontrado."
+ *         description: 'Usuário não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Usuário não encontrado.'
  *       '409':
- *         description: "Conflito (ex: usuário possui pedidos)."
+ *         description: 'Conflito (ex: usuário possui pedidos).'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Não é possível deletar este usuário pois ele está associado a pedidos existentes.'
  */
-userRoutes.delete('/:id', authMiddleware, adminMiddleware, deleteUserByIdController);
+userRoutes.delete(
+  '/:id',
+  authMiddleware,
+  adminMiddleware,
+  deleteUserByIdController
+);
 
 export default userRoutes;
