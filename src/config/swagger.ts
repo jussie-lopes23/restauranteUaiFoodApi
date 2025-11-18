@@ -142,14 +142,6 @@ const options: Options = {
   apis: ['./src/routes/*.ts'], // O caminho continua o mesmo
 };
 
-//let swaggerSpec;
-//try {
-//  swaggerSpec = swaggerJsdoc(options);
-//} catch (err) {
-//  console.error('Erro ao gerar swaggerSpec:', err);
-//  swaggerSpec = {}; // evita crash
-//}
-
 
 const swaggerSpec = swaggerJsdoc(options);
 
