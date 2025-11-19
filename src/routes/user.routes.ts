@@ -389,7 +389,7 @@ userRoutes.get('/:id', authMiddleware, adminMiddleware, getUserByIdController);
  * @swagger
  * /users/{id}:
  *   put:
- *     summary: '(Admin) Atualiza nome, telefone ou tipo de um usuário.'
+ *     summary: '(Admin) Atualiza o tipo de um usuário.'
  *     tags:
  *       - Users
  *     security:
