@@ -1,14 +1,142 @@
-🍔 UaiFood - Sistema de Gestão para RestauranteO UaiFood é uma aplicação Full-Stack para gestão de pedidos de um restaurante. O sistema permite que clientes façam pedidos online e que administradores gerenciem o cardápio, usuários e o status dos pedidos.📄 Documentação e ArquiteturaPara detalhes profundos sobre a arquitetura do projeto, decisões técnicas, segurança e design system, consulte o nosso documento de arquitetura:👉 Leia a Documentação de Arquitetura (ARCHITECTURE.md)🚀 Tecnologias UtilizadasBack-end: Node.js, Express, TypeScript, Prisma ORM, PostgreSQL, Zod, JWT.Front-end: React, Vite, TypeScript, Tailwind CSS, Context API.Infraestrutura: Docker (para o banco de dados).📦 Pré-requisitosAntes de começar, certifique-se de ter instalado na sua máquina:Node.js (v18 ou superior)GitDocker Desktop (Recomendado para o Banco de Dados)🛠️ Como Rodar o Projeto (Passo a Passo)Siga estas instruções na ordem para configurar o ambiente completo.Passo 1: Configurar o Banco de Dados (PostgreSQL)A forma mais fácil de rodar o banco é usando Docker. Abra o seu terminal e execute:Bashdocker run -d --name restaurante-db -e POSTGRES_PASSWORD=admindb -e POSTGRES_DB=restaurante_db -p 5432:5432 postgres
-Usuário: postgresSenha: admindbBanco: restaurante_dbPorta: 5432Passo 2: Configurar e Rodar o Back-end (restaurante-api)Abra um terminal e entre na pasta do back-end:Bashcd restaurante-api
-Instale as dependências:Bashnpm install
-Crie o arquivo de variáveis de ambiente:Crie um arquivo chamado .env na raiz da pasta restaurante-api.Cole o seguinte conteúdo:Snippet de código# Conexão com o Banco (Docker)
-DATABASE_URL="postgresql://postgres:admindb@localhost:5432/restaurante_db?schema=public"
+# 🍔 UaiFood - Sistema de Gestão para Restaurante
+
+O **UaiFood** é uma aplicação **Full-Stack** para gestão de pedidos de um restaurante.  
+O sistema permite que clientes façam pedidos online e que administradores gerenciem o cardápio, usuários e o status dos pedidos.
+
+---
+
+## 📄 Documentação e Arquitetura
+
+Para detalhes profundos sobre a arquitetura do projeto, decisões técnicas, segurança e design system, consulte:
+
+👉 **Leia a Documentação de Arquitetura (ARCHITECTURE.md)**
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+### **Back-end**
+- Node.js  
+- Express  
+- TypeScript  
+- Prisma ORM  
+- PostgreSQL  
+- Zod  
+- JWT  
+
+### **Front-end**
+- React  
+- Vite  
+- TypeScript  
+- Tailwind CSS  
+- Context API  
+
+### **Infraestrutura**
+- Docker (para o banco de dados)
+
+---
+
+## 📦 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado:
+
+- **Node.js (v18 ou superior)**
+- **Git**
+- **Docker Desktop** (Recomendado para o banco de dados)
+
+---
+
+## 🛠️ Como Rodar o Projeto (Passo a Passo)
+
+Siga estas instruções na ordem para configurar o ambiente completo.
+
+---
+
+## ✅ Passo 1: Configurar o Banco de Dados (PostgreSQL)
+
+A forma mais fácil de rodar o banco é usando Docker.
+
+Execute no terminal:
+
+```bash
+docker run -d --name restaurante-db \
+  -e POSTGRES_PASSWORD=admin \
+  -e POSTGRES_DB=restaurante \
+  -p 5432:5432 postgres
+```
+
+## ✅ Passo 2: Configurar e Rodar o Back-end (restaurante-api)
+
+Entre na pasta do back-end:
+```
+cd restauranteUaiFoodApi
+```
+
+Instale as partes:
+```
+npm install
+```
+
+Crie o arquivo .env na raiz com o conteúdo:
+```
+# Conexão com o Banco (Docker)
+DATABASE_URL="postgresql://postgres:senha@localhost:5432/nomeDoBanco?schema=public"
 
 # Chave Secreta para JWT (Gere uma aleatória segura)
 JWT_SECRET="sua_chave_secreta_super_segura_aqui"
-Crie as tabelas no banco de dados (Migrações):Bashnpx prisma migrate dev
-Inicie o servidor:Bashnpm run dev
-O servidor rodará em: http://localhost:3001Documentação Swagger: http://localhost:3001/api-docsPasso 3: Configurar e Rodar o Front-end (restaurante-web)Abra um novo terminal (mantenha o do back-end rodando) e entre na pasta do front-end:Bashcd restaurante-web
-Instale as dependências:Bashnpm install
-Inicie a aplicação web:Bashnpm run dev
-A aplicação rodará em: http://localhost:5173🧪 Como Testar a Aplicação1. Criar um Usuário (Cliente)Acesse http://localhost:5173.Vá em "Criar Conta".Preencha seus dados e marque o checkbox de privacidade.2. Acessar como AdministradorPara acessar o Painel Admin, você precisa promover um usuário a ADMIN via banco de dados (ou criar um seed).Use um gerenciador de banco (como DBeaver ou pgAdmin) ou o Prisma Studio (npx prisma studio na pasta da API).Encontre o usuário na tabela users.Mude a coluna type de CLIENT para ADMIN.Faça Logout e Login novamente no front-end.O botão "Painel Admin" aparecerá no topo.📚 Rotas da API (Resumo)Você pode ver e testar todas as rotas detalhadamente através do Swagger em /api-docs.MétodoRotaDescriçãoPOST/usersCadastro de ClientePOST/users/loginLogin (Retorna Token)GET/itemsListar Cardápio (Público)POST/ordersCriar Pedido (Autenticado)GET/ordersListar Pedidos (Cliente vê os seus, Admin vê todos)
+```
+
+Crie as tabelas no banco (migrações):
+```
+npx prisma migrate dev
+```
+
+Inicie o servidor:
+```
+npm run dev
+```
+
+Servidor rodando em:
+👉 http://localhost:3001
+---
+Swagger:
+👉 http://localhost:3001/api-docs
+---
+
+## ✅ Passo 3: Configurar e Rodar o Front-end (restaurante-web)
+
+Em outro terminal, acesse:
+
+```
+cd restauranteUaiFoodWeb
+```
+
+
+Instale as partes:
+
+```
+npm install
+```
+
+Inicie a aplica:
+
+```
+npm run dev
+```
+
+
+A aplicação rodará em:
+👉 http://localhost:5173
+
+---
+
+📚 Rotas da API (Resumo)
+
+Todas as rotas podem ser testadas no Swagger: /api-docs
+| Método   | Rota           | Descrição                                            |
+|----------|----------------|------------------------------------------------------|
+| **POST** | `/users`       | Cadastro de Cliente                                  |
+| **POST** | `/users/login` | Login (Retorna Token JWT)                            |
+| **GET**  | `/items`       | Listar Cardápio (Público)                            |
+| **POST** | `/orders`      | Criar Pedido (Autenticado)                           |
+| **GET**  | `/orders`      | Listar Pedidos (Cliente vê os seus / Admin vê todos) |
