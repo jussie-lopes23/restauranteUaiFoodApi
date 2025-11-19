@@ -11,11 +11,12 @@ const categoryRoutes = Router();
  * @swagger
  * /categories:
  *   get:
- *     summary: Lista todas as categorias.
- *     tags: [Categories]
+ *     summary: 'Lista todas as categorias.'
+ *     tags:
+ *       - Categories
  *     responses:
  *       '200':
- *         description: Lista de categorias.
+ *         description: 'Lista de categorias.'
  *         content:
  *           application/json:
  *             schema:
@@ -29,8 +30,9 @@ categoryRoutes.get('/', CategoryController.listCategoriesController);
  * @swagger
  * /categories/{id}:
  *   get:
- *     summary: Busca uma categoria por ID.
- *     tags: [Categories]
+ *     summary: 'Busca uma categoria por ID.'
+ *     tags:
+ *       - Categories
  *     parameters:
  *       - in: path
  *         name: id
@@ -39,13 +41,21 @@ categoryRoutes.get('/', CategoryController.listCategoriesController);
  *           type: string
  *     responses:
  *       '200':
- *         description: Dados da categoria.
+ *         description: 'Dados da categoria.'
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Category'
  *       '404':
- *         description: Categoria não encontrada.
+ *         description: 'Categoria não encontrada.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Categoria não encontrada.'
  */
 categoryRoutes.get('/:id', CategoryController.getCategoryByIdController);
 
@@ -55,8 +65,9 @@ categoryRoutes.get('/:id', CategoryController.getCategoryByIdController);
  * @swagger
  * /categories:
  *   post:
- *     summary: (Admin) Cria uma nova categoria.
- *     tags: [Categories]
+ *     summary: '(Admin) Cria uma nova categoria.'
+ *     tags:
+ *       - Categories
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -65,22 +76,63 @@ categoryRoutes.get('/:id', CategoryController.getCategoryByIdController);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [description]
+ *             required:
+ *               - description
  *             properties:
  *               description:
  *                 type: string
- *                 example: "Sobremesas"
+ *                 example: 'Sobremesas'
  *     responses:
  *       '201':
- *         description: Categoria criada.
+ *         description: 'Categoria criada.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
  *       '400':
- *         description: Erro de validação.
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *       '401':
- *         description: Não autorizado.
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  *       '403':
- *         description: Acesso negado.
+ *         description: 'Acesso negado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Acesso negado. Requer privilégios de administrador.'
  *       '409':
- *         description: Categoria já existe.
+ *         description: 'Categoria já existe.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Essa categoria já existe.'
  */
 categoryRoutes.post(
   '/',
@@ -93,8 +145,9 @@ categoryRoutes.post(
  * @swagger
  * /categories/{id}:
  *   put:
- *     summary: (Admin) Atualiza uma categoria.
- *     tags: [Categories]
+ *     summary: '(Admin) Atualiza uma categoria.'
+ *     tags:
+ *       - Categories
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -111,18 +164,54 @@ categoryRoutes.post(
  *             properties:
  *               description:
  *                 type: string
- *                 example: "Bebidas Geladas"
+ *                 example: 'Bebidas Geladas'
  *     responses:
  *       '200':
- *         description: Categoria atualizada.
+ *         description: 'Categoria atualizada.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
  *       '400':
- *         description: Erro de validação.
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
  *       '401':
- *         description: Não autorizado.
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  *       '403':
- *         description: Acesso negado.
+ *         description: 'Acesso negado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Acesso negado.'
  *       '404':
- *         description: Categoria não encontrada.
+ *         description: 'Categoria não encontrada.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Categoria não encontrada.'
  */
 categoryRoutes.put(
   '/:id',
@@ -135,8 +224,9 @@ categoryRoutes.put(
  * @swagger
  * /categories/{id}:
  *   delete:
- *     summary: (Admin) Deleta uma categoria.
- *     tags: [Categories]
+ *     summary: '(Admin) Deleta uma categoria.'
+ *     tags:
+ *       - Categories
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -147,13 +237,37 @@ categoryRoutes.put(
  *           type: string
  *     responses:
  *       '204':
- *         description: Categoria deletada.
+ *         description: 'Categoria deletada.'
  *       '401':
- *         description: Não autorizado.
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  *       '403':
- *         description: Acesso negado.
+ *         description: 'Acesso negado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Acesso negado.'
  *       '404':
- *         description: Categoria não encontrada.
+ *         description: 'Categoria não encontrada.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Categoria não encontrada.'
  */
 categoryRoutes.delete(
   '/:id',

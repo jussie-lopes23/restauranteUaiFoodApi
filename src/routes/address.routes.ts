@@ -4,15 +4,16 @@ import { authMiddleware } from '../middlewares/auth.middleware';
 
 const addressRoutes = Router();
 
-// Todas as rotas exigem autenticação
+// Todas as rotas de endereço exigem autenticação
 addressRoutes.use(authMiddleware);
 
 /**
  * @swagger
  * /addresses:
  *   post:
- *     summary: Cria um novo endereço para o usuário logado.
- *     tags: [Addresses]
+ *     summary: 'Cria um novo endereço para o usuário logado.'
+ *     tags:
+ *       - Addresses
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -31,29 +32,47 @@ addressRoutes.use(authMiddleware);
  *             properties:
  *               street:
  *                 type: string
- *                 example: "Rua das Flores"
  *               number:
  *                 type: string
- *                 example: "123"
  *               district:
  *                 type: string
- *                 example: "Centro"
  *               city:
  *                 type: string
- *                 example: "Uberlândia"
  *               state:
  *                 type: string
- *                 example: "MG"
  *               zipCode:
  *                 type: string
- *                 example: "38400-000"
  *     responses:
- *       201:
- *         description: Endereço criado.
- *       400:
- *         description: Erro de validação.
- *       401:
- *         description: Não autorizado.
+ *       '201':
+ *         description: 'Endereço criado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Address'
+ *       '400':
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       '401':
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  */
 addressRoutes.post('/', AddressController.createAddressController);
 
@@ -61,21 +80,30 @@ addressRoutes.post('/', AddressController.createAddressController);
  * @swagger
  * /addresses:
  *   get:
- *     summary: Lista todos os endereços do usuário logado.
- *     tags: [Addresses]
+ *     summary: 'Lista todos os endereços do usuário logado.'
+ *     tags:
+ *       - Addresses
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       200:
- *         description: Lista de endereços.
+ *       '200':
+ *         description: 'Lista de endereços.'
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Address'
- *       401:
- *         description: Não autorizado.
+ *       '401':
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
  */
 addressRoutes.get('/', AddressController.listAddressesController);
 
@@ -83,8 +111,9 @@ addressRoutes.get('/', AddressController.listAddressesController);
  * @swagger
  * /addresses/{id}:
  *   get:
- *     summary: Busca um endereço do usuário logado por ID.
- *     tags: [Addresses]
+ *     summary: 'Busca um endereço do usuário logado por ID.'
+ *     tags:
+ *       - Addresses
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -94,12 +123,32 @@ addressRoutes.get('/', AddressController.listAddressesController);
  *         schema:
  *           type: string
  *     responses:
- *       200:
- *         description: Dados do endereço.
- *       401:
- *         description: Não autorizado.
- *       404:
- *         description: Endereço não encontrado ou não pertence ao usuário.
+ *       '200':
+ *         description: 'Dados do endereço.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Address'
+ *       '401':
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
+ *       '404':
+ *         description: 'Endereço não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Endereço não encontrado ou não pertence ao usuário.'
  */
 addressRoutes.get('/:id', AddressController.getAddressByIdController);
 
@@ -107,8 +156,9 @@ addressRoutes.get('/:id', AddressController.getAddressByIdController);
  * @swagger
  * /addresses/{id}:
  *   put:
- *     summary: Atualiza um endereço do usuário logado.
- *     tags: [Addresses]
+ *     summary: 'Atualiza um endereço do usuário logado.'
+ *     tags:
+ *       - Addresses
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -123,14 +173,42 @@ addressRoutes.get('/:id', AddressController.getAddressByIdController);
  *           schema:
  *             $ref: '#/components/schemas/Address'
  *     responses:
- *       200:
- *         description: Endereço atualizado.
- *       400:
- *         description: Erro de validação.
- *       401:
- *         description: Não autorizado.
- *       404:
- *         description: Endereço não encontrado ou não pertence ao usuário.
+ *       '200':
+ *         description: 'Endereço atualizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Address'
+ *       '400':
+ *         description: 'Erro de validação.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Erro de validação'
+ *       '401':
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
+ *       '404':
+ *         description: 'Endereço não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Endereço não encontrado ou não pertence ao usuário.'
  */
 addressRoutes.put('/:id', AddressController.updateAddressController);
 
@@ -138,8 +216,9 @@ addressRoutes.put('/:id', AddressController.updateAddressController);
  * @swagger
  * /addresses/{id}:
  *   delete:
- *     summary: Deleta um endereço do usuário logado.
- *     tags: [Addresses]
+ *     summary: 'Deleta (desassocia) um endereço do usuário logado.'
+ *     tags:
+ *       - Addresses
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -149,12 +228,28 @@ addressRoutes.put('/:id', AddressController.updateAddressController);
  *         schema:
  *           type: string
  *     responses:
- *       204:
- *         description: Endereço deletado/desassociado.
- *       401:
- *         description: Não autorizado.
- *       404:
- *         description: Endereço não encontrado ou não pertence ao usuário.
+ *       '204':
+ *         description: 'Endereço deletado/desassociado.'
+ *       '401':
+ *         description: 'Não autorizado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Token inválido.'
+ *       '404':
+ *         description: 'Endereço não encontrado.'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 'Endereço não encontrado ou não pertence ao usuário.'
  */
 addressRoutes.delete('/:id', AddressController.deleteAddressController);
 
