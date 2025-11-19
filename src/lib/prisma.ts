@@ -1,4 +1,4 @@
-// Caminho padrão (mais simples)
+
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient({

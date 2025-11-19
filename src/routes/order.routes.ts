@@ -5,7 +5,7 @@ import { adminMiddleware } from '../middlewares/admin.middleware';
 
 const orderRoutes = Router();
 
-// --- Rotas Protegidas (Clientes e Admins) ---
+//Rotas Protegidas (Clientes e Admins)
 
 /**
  * @swagger
@@ -157,7 +157,7 @@ orderRoutes.get('/', authMiddleware, OrderController.listOrdersController);
  */
 orderRoutes.get('/:id', authMiddleware, OrderController.getOrderByIdController);
 
-// --- Rota Exclusiva de Admin ---
+//Rota Exclusiva de Admin
 
 /**
  * @swagger

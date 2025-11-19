@@ -4,7 +4,6 @@ import { authMiddleware } from '../middlewares/auth.middleware';
 
 const addressRoutes = Router();
 
-// Todas as rotas de endereço exigem autenticação
 addressRoutes.use(authMiddleware);
 
 /**

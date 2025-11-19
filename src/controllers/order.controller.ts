@@ -3,7 +3,7 @@ import * as OrderService from '../services/order.service';
 import { ZodError } from 'zod';
 import { createOrderSchema, updateOrderStatusSchema } from '../schemas/order.schema';
 
-// // Tratador de erros
+
 // const handleError = (error: unknown, res: Response) => {
 //   if (error instanceof ZodError) {
 //     return res.status(400).json({ message: 'Erro de validação', errors: error.issues });
@@ -22,7 +22,6 @@ import { createOrderSchema, updateOrderStatusSchema } from '../schemas/order.sch
 //   return res.status(500).json({ message: 'Erro interno do servidor.' });
 // };
 
-// src/controllers/order.controller.ts
 
 const handleError = (error: unknown, res: Response) => {
   if (error instanceof ZodError) {
@@ -52,7 +51,7 @@ const handleError = (error: unknown, res: Response) => {
   });
 };
 
-// 1. CRIAR
+//CRIAR
 export const createOrderController = async (req: Request, res: Response) => {
   try {
     const validatedData = createOrderSchema.parse(req.body);
@@ -65,7 +64,7 @@ export const createOrderController = async (req: Request, res: Response) => {
   }
 };
 
-// 2. LISTAR
+//LISTAR
 export const listOrdersController = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
@@ -76,7 +75,7 @@ export const listOrdersController = async (req: Request, res: Response) => {
   }
 };
 
-// 3. BUSCAR POR ID
+//BUSCAR POR ID
 export const getOrderByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -88,7 +87,7 @@ export const getOrderByIdController = async (req: Request, res: Response) => {
   }
 };
 
-// 4. ATUALIZAR STATUS (Admin)
+//ATUALIZAR STATUS (Admin)
 export const updateOrderStatusController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

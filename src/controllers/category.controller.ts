@@ -3,7 +3,7 @@ import * as CategoryService from '../services/category.service';
 import { ZodError } from 'zod';
 import { createCategorySchema, updateCategorySchema } from '../schemas/category.schema';
 
-// 1. CRIAR
+//CRIAR
 export const createCategoryController = async (req: Request, res: Response) => {
   try {
     const validatedData = createCategorySchema.parse(req.body);
@@ -20,7 +20,7 @@ export const createCategoryController = async (req: Request, res: Response) => {
   }
 };
 
-// 2. LISTAR
+//LISTAR
 export const listCategoriesController = async (req: Request, res: Response) => {
   try {
     const categories = await CategoryService.listCategoriesService();
@@ -30,7 +30,7 @@ export const listCategoriesController = async (req: Request, res: Response) => {
   }
 };
 
-// 3. BUSCAR POR ID
+//BUSCAR POR ID
 export const getCategoryByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -44,7 +44,7 @@ export const getCategoryByIdController = async (req: Request, res: Response) => 
   }
 };
 
-// 4. ATUALIZAR
+//ATUALIZAR
 export const updateCategoryController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -62,17 +62,16 @@ export const updateCategoryController = async (req: Request, res: Response) => {
   }
 };
 
-// 5. DELETAR
+//DELETAR
 export const deleteCategoryController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     await CategoryService.deleteCategoryService(id);
-    return res.status(204).send(); // 204 No Content (sucesso sem corpo)
+    return res.status(204).send(); 
   } catch (error: unknown) {
     if (error instanceof Error && error.message === 'Categoria não encontrada.') {
       return res.status(404).json({ message: error.message });
     }
-    // TODO: Capturar erro se a categoria estiver em uso (Foreign Key violation)
     return res.status(500).json({ message: 'Erro interno do servidor.' });
   }
 };

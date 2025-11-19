@@ -3,14 +3,13 @@ import * as ItemService from '../services/item.service';
 import { ZodError } from 'zod';
 import { createItemSchema, updateItemSchema } from '../schemas/item.schema';
 
-// Tratador de erros centralizado (para este controller)
+
 const handleError = (error: unknown, res: Response) => {
   if (error instanceof ZodError) {
     return res.status(400).json({ message: 'Erro de validação', errors: error.issues });
   }
   if (error instanceof Error) {
     if (error.message === 'Categoria não encontrada.') {
-      // 400 Bad Request - O usuário enviou um ID de categoria que não existe
       return res.status(400).json({ message: error.message }); 
     }
     if (error.message === 'Item não encontrado.') {
@@ -20,7 +19,7 @@ const handleError = (error: unknown, res: Response) => {
   return res.status(500).json({ message: 'Erro interno do servidor.' });
 };
 
-// 1. CRIAR
+//CRIAR
 export const createItemController = async (req: Request, res: Response) => {
   try {
     const validatedData = createItemSchema.parse(req.body);
@@ -31,7 +30,7 @@ export const createItemController = async (req: Request, res: Response) => {
   }
 };
 
-// 2. LISTAR
+//LISTAR
 export const listItemsController = async (req: Request, res: Response) => {
   try {
     const items = await ItemService.listItemsService();
@@ -41,7 +40,7 @@ export const listItemsController = async (req: Request, res: Response) => {
   }
 };
 
-// 3. BUSCAR POR ID
+//BUSCAR POR ID
 export const getItemByIdController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -52,7 +51,7 @@ export const getItemByIdController = async (req: Request, res: Response) => {
   }
 };
 
-// 4. ATUALIZAR
+//ATUALIZAR
 export const updateItemController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -64,7 +63,7 @@ export const updateItemController = async (req: Request, res: Response) => {
   }
 };
 
-// 5. DELETAR
+//DELETAR
 export const deleteItemController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

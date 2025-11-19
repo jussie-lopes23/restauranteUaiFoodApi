@@ -16,7 +16,7 @@ const handleError = (error: unknown, res: Response) => {
   return res.status(500).json({ message: 'Erro interno do servidor.' });
 };
 
-// 1. CRIAR
+//CRIAR
 export const createAddressController = async (req: Request, res: Response) => {
   try {
     const validatedData = createAddressSchema.parse(req.body);
@@ -29,7 +29,7 @@ export const createAddressController = async (req: Request, res: Response) => {
   }
 };
 
-// 2. LISTAR
+//LISTAR
 export const listAddressesController = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -40,10 +40,10 @@ export const listAddressesController = async (req: Request, res: Response) => {
   }
 };
 
-// 3. BUSCAR POR ID
+//BUSCAR POR ID
 export const getAddressByIdController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // ID do endereço
+    const { id } = req.params; 
     const userId = req.user!.id;
     const address = await AddressService.getAddressByIdService(id, userId);
     return res.status(200).json(address);
@@ -52,10 +52,10 @@ export const getAddressByIdController = async (req: Request, res: Response) => {
   }
 };
 
-// 4. ATUALIZAR
+//ATUALIZAR
 export const updateAddressController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // ID do endereço
+    const { id } = req.params; 
     const userId = req.user!.id;
     const validatedData = updateAddressSchema.parse(req.body);
 
@@ -66,7 +66,7 @@ export const updateAddressController = async (req: Request, res: Response) => {
   }
 };
 
-// 5. DELETAR
+//DELETAR
 export const deleteAddressController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; // ID do endereço

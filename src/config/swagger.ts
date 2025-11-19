@@ -18,7 +18,6 @@ const options: Options = {
       },
     ],
     
-    // --- DEFINIÇÕES GLOBAIS DE TAGS ---
     tags: [
       {
         name: 'Users',
@@ -42,9 +41,7 @@ const options: Options = {
       },
     ],
 
-    // --- DEFINIÇÕES GLOBAIS DE COMPONENTES ---
     components: {
-      // --- Definição de Segurança (Bearer Token) ---
       securitySchemes: {
         bearerAuth: {
           type: 'http',
@@ -54,7 +51,6 @@ const options: Options = {
         },
       },
       
-      // --- Definições de Schemas (Modelos) ---
       schemas: {
         User: {
           type: 'object',
@@ -139,7 +135,7 @@ const options: Options = {
       },
     },
   },
-  apis: ['./src/routes/*.ts'], // O caminho continua o mesmo
+  apis: ['./src/routes/*.ts'], 
 };
 
 

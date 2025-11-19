@@ -16,7 +16,7 @@ import { adminMiddleware } from '../middlewares/admin.middleware';
 
 const userRoutes = Router();
 
-// --- Rotas Públicas ---
+//Rotas Públicas
 
 /**
  * @swagger
@@ -132,7 +132,7 @@ userRoutes.post('/', createUserController);
  */
 userRoutes.post('/login', loginUserController);
 
-// --- Rotas Protegidas (Gerenciamento do Próprio Usuário) ---
+//Rotas Protegidas (Gerenciamento do Próprio Usuário) 
 
 /**
  * @swagger
@@ -302,7 +302,7 @@ userRoutes.put('/me/password', authMiddleware, changePasswordController);
  */
 userRoutes.delete('/me', authMiddleware, deleteMeController);
 
-// --- Rotas de ADMIN (Gerenciamento de TODOS os Usuários) ---
+//Rotas de ADMIN 
 
 /**
  * @swagger

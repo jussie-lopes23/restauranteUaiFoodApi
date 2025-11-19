@@ -2,25 +2,23 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserType } from '@prisma/client';
 
-// Vamos definir uma interface para o payload do nosso token
+//interface para o payload do token
 interface TokenPayload {
   sub: string; // ID do usuário
   name: string;
   type: string;
-  // iat e exp são adicionados automaticamente pelo jwt
   iat: number;
   exp: number;
 }
 
-/**
- * Middleware para verificar a autenticação JWT.
- */
+
+//Middleware para verificar a autenticação JWT.
 export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // 1. Pega o header 'authorization'
+
   const { authorization } = req.headers;
 
   // 2. Verifica se o header foi enviado

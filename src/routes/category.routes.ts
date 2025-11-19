@@ -5,7 +5,7 @@ import { adminMiddleware } from '../middlewares/admin.middleware';
 
 const categoryRoutes = Router();
 
-// --- Rotas Públicas ---
+//Rotas Públicas
 
 /**
  * @swagger
@@ -59,7 +59,7 @@ categoryRoutes.get('/', CategoryController.listCategoriesController);
  */
 categoryRoutes.get('/:id', CategoryController.getCategoryByIdController);
 
-// --- Rotas de Admin (Protegidas) ---
+//Rotas de Admin
 
 /**
  * @swagger

@@ -24,10 +24,10 @@ export const addressSchema = z.object({
   }),
 });
 
-// Schema para CRIAR (todos os campos obrigatórios)
+// Schema para criar todos os campos obrigatórios
 export const createAddressSchema = addressSchema;
 export type CreateAddressInput = z.infer<typeof createAddressSchema>;
 
-// Schema para ATUALIZAR (todos os campos opcionais)
+// Schema para atualizar todos os campos opcionais
 export const updateAddressSchema = addressSchema.partial();
 export type UpdateAddressInput = z.infer<typeof updateAddressSchema>;

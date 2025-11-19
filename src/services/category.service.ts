@@ -1,9 +1,8 @@
 import prisma from '../lib/prisma';
 import { CreateCategoryInput, UpdateCategoryInput } from '../schemas/category.schema';
 
-// 1. CRIAR Categoria
+//Criar Categoria
 export const createCategoryService = async (input: CreateCategoryInput) => {
-  // Verifica se a categoria já existe
   const categoryExists = await prisma.category.findFirst({
     where: { description: input.description },
   });
@@ -17,16 +16,16 @@ export const createCategoryService = async (input: CreateCategoryInput) => {
   });
 };
 
-// 2. LISTAR todas as Categorias
+//Lista todas as Categorias
 export const listCategoriesService = async () => {
   return prisma.category.findMany({
     orderBy: {
-      description: 'asc', // Ordena alfabeticamente
+      description: 'asc', 
     },
   });
 };
 
-// 3. BUSCAR UMA Categoria por ID
+//Buscar uma Categoria por ID
 export const getCategoryByIdService = async (id: string) => {
   const category = await prisma.category.findUnique({
     where: { id },
@@ -38,9 +37,9 @@ export const getCategoryByIdService = async (id: string) => {
   return category;
 };
 
-// 4. ATUALIZAR Categoria
+//atualizar Categoria
 export const updateCategoryService = async (id: string, input: UpdateCategoryInput) => {
-  // Garante que o ID existe antes de atualizar
+
   const categoryExists = await prisma.category.findUnique({ where: { id } });
   if (!categoryExists) {
     throw new Error('Categoria não encontrada.');
@@ -52,17 +51,14 @@ export const updateCategoryService = async (id: string, input: UpdateCategoryInp
   });
 };
 
-// 5. DELETAR Categoria
+//Deletar Categoria
 export const deleteCategoryService = async (id: string) => {
-  // Garante que o ID existe antes de deletar
+
   const categoryExists = await prisma.category.findUnique({ where: { id } });
   if (!categoryExists) {
     throw new Error('Categoria não encontrada.');
   }
 
-  // TODO: Adicionar lógica para verificar se a categoria está em uso por um 'Item'
-  // Por enquanto, vamos apenas deletar.
-  
   return prisma.category.delete({
     where: { id },
   });
