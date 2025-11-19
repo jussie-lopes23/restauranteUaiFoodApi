@@ -3,30 +3,60 @@ import * as OrderService from '../services/order.service';
 import { ZodError } from 'zod';
 import { createOrderSchema, updateOrderStatusSchema } from '../schemas/order.schema';
 
-// Tratador de erros
+// // Tratador de erros
+// const handleError = (error: unknown, res: Response) => {
+//   if (error instanceof ZodError) {
+//     return res.status(400).json({ message: 'Erro de validação', errors: error.issues });
+//   }
+//   if (error instanceof Error) {
+//     if (error.message.includes('não encontrado')) {
+//       return res.status(404).json({ message: error.message });
+//     }
+//     if (error.message.includes('Acesso não autorizado')) {
+//       return res.status(403).json({ message: error.message });
+//     }
+//     if (error.message.includes('Um ou mais itens não foram encontrados')) {
+//       return res.status(400).json({ message: error.message });
+//     }
+//   }
+//   return res.status(500).json({ message: 'Erro interno do servidor.' });
+// };
+
+// src/controllers/order.controller.ts
+
 const handleError = (error: unknown, res: Response) => {
   if (error instanceof ZodError) {
     return res.status(400).json({ message: 'Erro de validação', errors: error.issues });
   }
+  
   if (error instanceof Error) {
+    
+    console.error('ERRO DETALHADO:', error.message); 
+    
     if (error.message.includes('não encontrado')) {
       return res.status(404).json({ message: error.message });
     }
-    if (error.message.includes('Acesso não autorizado')) {
+    if (error.message.includes('Acesso não autorizado') || error.message.includes('pertence')) {
       return res.status(403).json({ message: error.message });
     }
-    if (error.message.includes('Um ou mais itens não foram encontrados')) {
+    if (error.message.includes('Um ou mais itens')) {
       return res.status(400).json({ message: error.message });
     }
   }
-  return res.status(500).json({ message: 'Erro interno do servidor.' });
+
+  console.error('Erro inesperado (Stack):', error); 
+
+  
+  return res.status(500).json({ 
+    message: `Erro interno: ${error instanceof Error ? error.message : 'Desconhecido'}` 
+  });
 };
 
 // 1. CRIAR
 export const createOrderController = async (req: Request, res: Response) => {
   try {
     const validatedData = createOrderSchema.parse(req.body);
-    // Passa os dados do usuário do token para o serviço
+  
     const user = req.user!; 
     const order = await OrderService.createOrderService(validatedData, user);
     return res.status(201).json(order);
